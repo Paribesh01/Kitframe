@@ -153,7 +153,7 @@ export async function generateKit(
 
   const kit: Kit = {
     source: {
-      company: companyName,
+      company: brief.companyName,
       company_url: companyUrl,
       role: extracted.title,
       location: "",

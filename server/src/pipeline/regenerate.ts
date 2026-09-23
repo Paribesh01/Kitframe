@@ -74,7 +74,7 @@ export async function regenerateQuestionCategory(
 export async function regenerateCompanyBrief(
   companyName: string,
   companyUrl: string,
-): Promise<{ summary: string; what_they_do: string; sources: string[] }> {
+): Promise<{ companyName: string; summary: string; what_they_do: string; sources: string[] }> {
   const crawl = await crawlCompanySite(companyUrl).catch(() => ({
     pages: [],
     skipped: [],
@@ -83,6 +83,7 @@ export async function regenerateCompanyBrief(
   const search = await searchPublicDiscussion(companyName);
   const brief = await generateCompanyBrief(companyName, crawl.pages, search.results);
   return {
+    companyName: brief.companyName,
     summary: brief.summary,
     what_they_do: brief.what_they_do,
     sources: [...crawl.pages.map((p) => p.url), ...search.results.map((r) => r.url)],

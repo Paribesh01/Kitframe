@@ -219,6 +219,7 @@ kitsRouter.post("/:id/company-brief/regenerate", async (req, res) => {
   if (!kit) return;
 
   const fresh = await regenerateCompanyBrief(kit.source.company, doc.companyUrl);
+  kit.source = { ...kit.source, company: fresh.companyName };
   kit.company_brief = { summary: fresh.summary, what_they_do: fresh.what_they_do, sources: fresh.sources };
   await persistKit(doc, kit);
   res.json({ kit: doc.kit });

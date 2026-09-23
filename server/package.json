@@ -13,6 +13,8 @@
     "fixtures:serve": "node fixtures/serve.mjs"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.73",
+    "ai": "^7.0.112",
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.6",

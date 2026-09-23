@@ -10,11 +10,14 @@ generation pipeline, not a single prompt.
 - **Frontend:** Next.js 14 (App Router) + Tailwind CSS
 - **Backend:** Node.js + Express (TypeScript, ESM)
 - **Database:** MongoDB (Mongoose)
-- **LLM:** any OpenAI-chat-completions-compatible endpoint — defaults to **Groq**
-  (`llama-3.3-70b-versatile`), which has a genuinely free tier and is fast enough to make
-  the 15-minute batch budget comfortable. Switching to OpenAI, Together, Fireworks, etc.
-  requires only changing three env vars (`LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`) — no
-  code change.
+- **LLM:** Vercel AI SDK (`ai` + `@ai-sdk/openai`) against any OpenAI-compatible
+  endpoint — defaults to **Groq** (`llama-3.3-70b-versatile`), which has a genuinely free
+  tier and is fast enough to make the 15-minute batch budget comfortable. Switching to
+  OpenAI, Together, Fireworks, etc. requires only changing three env vars
+  (`LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`) — no code change. Every pipeline call uses
+  `generateText` with a zod schema (`Output.object`) instead of hand-parsed JSON, so
+  malformed output is caught by schema validation rather than a regex, and the SDK's own
+  retry/backoff handles rate limits and transient failures.
 - **Scraping:** hand-rolled fetch + `cheerio`, no headless browser (the target pages are
   static marketing/careers pages, not SPAs that need JS execution)
 - **Search:** DuckDuckGo's no-JS HTML endpoint, scraped directly — no API key exists to
@@ -230,7 +233,7 @@ dropped.
 | No discoverable hiring/about page | Crawl proceeds with whatever was found (often just the homepage); brief says so explicitly instead of inventing a hiring process |
 | Two-line JD stub | Extraction returns a short requirement list rather than padding it; the kit is thin and honest about it |
 | No public discussion found | `search.ts` returns an empty result set with a recorded skip reason; brief notes it plainly |
-| Model returns invalid/incomplete JSON | `llm/client.ts` retries the call once with the fenced/prose-tolerant extractor before giving up; `validateKit` catches anything that still slips through before persistence |
+| Model returns invalid/incomplete JSON | Every generation call is schema-constrained via the AI SDK's `Output.object` (zod), so malformed output fails validation at the SDK layer and is retried there; `validateKit` is a second, independent check against the full Appendix A shape before persistence |
 | Rate limit / transient provider failure | Exponential backoff + jitter, up to 4 retries, on both the LLM client and the page fetcher |
 | Same description + company submitted twice | `Kit.dedupeKey` (hash of user + JD + URL); a repeat POST while a prior non-failed kit exists returns that kit instead of starting a duplicate run |
 | 1-day or 60-day schedule | Handled by the scheduler as described above — everything on day 1, or padded with review days |
