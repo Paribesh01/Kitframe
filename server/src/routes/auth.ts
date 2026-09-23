@@ -13,9 +13,16 @@ const credentialsSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+// Frontend and backend are deployed on different domains (e.g. Vercel +
+// Render), which makes every API call a cross-site request from the
+// cookie's point of view. SameSite=Lax cookies are withheld on cross-site
+// fetch/XHR (only same-site or top-level navigation), so the session cookie
+// would silently stop being sent — hence SameSite=None (which requires
+// Secure) in production, and Lax locally where frontend/backend share the
+// "localhost" registrable domain across ports.
 const cookieOptions = {
   httpOnly: true,
-  sameSite: "lax" as const,
+  sameSite: (env.isProduction ? "none" : "lax") as "none" | "lax",
   secure: env.isProduction,
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
@@ -59,7 +66,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.post("/logout", (_req, res) => {
-  res.clearCookie(SESSION_COOKIE);
+  res.clearCookie(SESSION_COOKIE, { httpOnly: true, sameSite: cookieOptions.sameSite, secure: cookieOptions.secure });
   res.status(204).send();
 });
 
