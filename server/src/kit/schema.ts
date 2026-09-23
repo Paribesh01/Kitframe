@@ -80,6 +80,7 @@ export const kitSchema = z.object({
 });
 
 export type Kit = z.infer<typeof kitSchema>;
+export type QuestionCategory = z.infer<typeof questionCategorySchema>;
 export type Requirement = z.infer<typeof requirementSchema>;
 export type Question = z.infer<typeof questionSchema>;
 export type Flashcard = z.infer<typeof flashcardSchema>;

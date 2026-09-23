@@ -1,8 +1,14 @@
-import robotsParser from "robots-parser";
+import robotsParserPkg from "robots-parser";
 
-const cache = new Map<string, ReturnType<typeof robotsParser> | null>();
+interface Robot {
+  isAllowed(url: string, ua?: string): boolean | undefined;
+}
 
-async function loadRobots(origin: string): Promise<ReturnType<typeof robotsParser> | null> {
+const robotsParser = robotsParserPkg as unknown as (url: string, robotstxt: string) => Robot;
+
+const cache = new Map<string, Robot | null>();
+
+async function loadRobots(origin: string): Promise<Robot | null> {
   if (cache.has(origin)) return cache.get(origin) ?? null;
   try {
     const res = await fetch(`${origin}/robots.txt`, { signal: AbortSignal.timeout(5000) });
