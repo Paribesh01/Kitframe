@@ -1,0 +1,32 @@
+[
+  {
+    "id": "case-01-full",
+    "jd": "Senior Backend Engineer\n\nAcme Robotics is looking for a Senior Backend Engineer to help build the fleet-coordination services behind our warehouse robots.\n\nRequired:\n- 5+ years building production backend services in Node.js or Go\n- Experience with distributed systems and message queues\n- Comfortable owning a service end to end, from design to on-call\n\nBonus points for:\n- Experience with robotics or real-time systems\n- Familiarity with Kubernetes\n\nYou will mentor junior engineers on the team and participate in system design reviews.",
+    "company_url": "http://localhost:8099/sample-company-site/index.html",
+    "days": 5
+  },
+  {
+    "id": "case-02-thin-stub",
+    "jd": "Backend dev needed. Node.js. Remote.",
+    "company_url": "http://localhost:8099/sample-company-site/index.html",
+    "days": 3
+  },
+  {
+    "id": "case-03-no-hiring-page",
+    "jd": "Software Engineer\n\nQuietfirm is looking for a Software Engineer with 3+ years of experience in TypeScript and REST API design. Must be comfortable working directly with clients.",
+    "company_url": "http://localhost:8099/no-hiring-site/index.html",
+    "days": 7
+  },
+  {
+    "id": "case-04-unreachable",
+    "jd": "Platform Engineer\n\nWe need a Platform Engineer with strong AWS and Terraform experience, 4+ years required.",
+    "company_url": "http://localhost:8099/does-not-exist/index.html",
+    "days": 4
+  },
+  {
+    "id": "case-05-long-schedule",
+    "jd": "Staff Engineer\n\nStaff Engineer role requiring 8+ years of experience, deep expertise in distributed systems, and a track record of mentoring senior engineers. Must have led at least one major architecture migration.",
+    "company_url": "http://localhost:8099/sample-company-site/index.html",
+    "days": 30
+  }
+]

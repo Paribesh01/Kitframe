@@ -9,7 +9,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "evaluate": "tsx src/batch/evaluate.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "fixtures:serve": "node fixtures/serve.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
