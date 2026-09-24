@@ -92,7 +92,7 @@ export function WeakSpotsTab({ kitId }: { kitId: string }) {
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!report)
     return (
-      <div className="flex items-center gap-2 text-sm text-ink-400">
+      <div className="card flex min-h-[200px] items-center justify-center gap-2 text-sm text-ink-400">
         <Loader2 className="h-4 w-4 animate-spin" /> Scoring your readiness…
       </div>
     );

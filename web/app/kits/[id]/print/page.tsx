@@ -126,7 +126,7 @@ function PrintPageContent() {
   if (error) return <p className="p-6 text-sm text-red-600">{error}</p>;
   if (!detail || !detail.kit)
     return (
-      <div className="flex items-center gap-2 p-6 text-sm text-ink-400">
+      <div className="flex min-h-[60vh] items-center justify-center gap-2 text-sm text-ink-400">
         <Loader2 className="h-4 w-4 animate-spin" /> Loading…
       </div>
     );
