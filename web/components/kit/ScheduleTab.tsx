@@ -14,7 +14,7 @@ export function ScheduleTab({ kitId, kit, busy, onMutate }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-500">
           {kit.schedule.days_available} day(s) requested · {kit.coverage.passes} coverage pass(es)
         </p>
         <button
@@ -30,16 +30,16 @@ export function ScheduleTab({ kitId, kit, busy, onMutate }: Props) {
         {kit.schedule.days.map((day) => (
           <li key={day.day} className="card p-4">
             <div className="mb-2 flex items-center justify-between">
-              <p className="font-medium text-slate-900">Day {day.day}</p>
-              <span className="badge bg-slate-100 text-slate-600">{day.minutes} min</span>
+              <p className="font-medium text-ink-900">Day {day.day}</p>
+              <span className="badge bg-ink-100 text-ink-600">{day.minutes} min</span>
             </div>
-            <p className="mb-2 text-sm text-slate-600">{day.focus}</p>
-            <ul className="space-y-1 text-sm text-slate-700">
+            <p className="mb-2 text-sm text-ink-600">{day.focus}</p>
+            <ul className="space-y-1 text-sm text-ink-700">
               {day.question_ids.map((qid) => {
                 const q = kit.questions.find((qq) => qq.id === qid);
                 return <li key={qid}>{q ? q.prompt : qid}</li>;
               })}
-              {day.question_ids.length === 0 && <li className="text-slate-400">Free day</li>}
+              {day.question_ids.length === 0 && <li className="text-ink-400">Free day</li>}
             </ul>
           </li>
         ))}

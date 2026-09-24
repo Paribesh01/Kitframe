@@ -2,7 +2,7 @@ import type { Kit } from "@/lib/types";
 
 const PRIORITY_STYLES: Record<string, string> = {
   must: "bg-red-100 text-red-700",
-  nice: "bg-slate-100 text-slate-600",
+  nice: "bg-ink-100 text-ink-600",
 };
 
 export function RequirementsTab({ kit }: { kit: Kit }) {
@@ -10,9 +10,9 @@ export function RequirementsTab({ kit }: { kit: Kit }) {
     <div className="card space-y-5 p-5">
       <div>
         <p className="label">Responsibilities</p>
-        <ul className="list-inside list-disc space-y-1 text-sm text-slate-700">
+        <ul className="list-inside list-disc space-y-1 text-sm text-ink-700">
           {kit.role.responsibilities.length === 0 && (
-            <li className="list-none text-slate-400">None extracted.</li>
+            <li className="list-none text-ink-400">None extracted.</li>
           )}
           {kit.role.responsibilities.map((r, i) => (
             <li key={i}>{r}</li>
@@ -23,7 +23,7 @@ export function RequirementsTab({ kit }: { kit: Kit }) {
       <div>
         <p className="label">Requirements ({kit.role.requirements.length})</p>
         {kit.role.requirements.length === 0 && (
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-ink-400">
             This job description didn&apos;t contain enough detail to extract concrete requirements.
           </p>
         )}
@@ -31,10 +31,10 @@ export function RequirementsTab({ kit }: { kit: Kit }) {
           {kit.role.requirements.map((r) => {
             const uncovered = kit.coverage.uncovered_requirement_ids.includes(r.id);
             return (
-              <li key={r.id} className="flex items-start justify-between gap-3 rounded-md border border-slate-200 p-3">
+              <li key={r.id} className="flex items-start justify-between gap-3 rounded-xl border border-ink-200 p-3">
                 <div>
-                  <p className="text-sm text-slate-800">{r.text}</p>
-                  <p className="mt-1 text-xs text-slate-400">{r.kind}</p>
+                  <p className="text-sm text-ink-800">{r.text}</p>
+                  <p className="mt-1 text-xs text-ink-400">{r.kind}</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span className={`badge ${PRIORITY_STYLES[r.priority]}`}>{r.priority}</span>

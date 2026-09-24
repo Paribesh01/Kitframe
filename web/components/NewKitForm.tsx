@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { FileText, Files, Loader2, Sparkles, Upload } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import { parseBatchFile, type BatchCaseInput } from "@/lib/parseBatchFile";
 
@@ -58,24 +59,34 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
   }
 
   return (
-    <div className="card p-5">
-      <div className="mb-4 flex gap-2" role="tablist" aria-label="Kit creation mode">
+    <div className="card p-6">
+      <div
+        className="mb-5 inline-flex gap-1 rounded-xl bg-ink-100 p-1"
+        role="tablist"
+        aria-label="Kit creation mode"
+      >
         <button
           type="button"
           role="tab"
           aria-selected={mode === "single"}
-          className={mode === "single" ? "btn-primary" : "btn-secondary"}
+          className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+            mode === "single" ? "bg-white text-ink-900 shadow-soft" : "text-ink-500 hover:text-ink-700"
+          }`}
           onClick={() => setMode("single")}
         >
+          <FileText className="h-4 w-4" />
           Paste one role
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={mode === "batch"}
-          className={mode === "batch" ? "btn-primary" : "btn-secondary"}
+          className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+            mode === "batch" ? "bg-white text-ink-900 shadow-soft" : "text-ink-500 hover:text-ink-700"
+          }`}
           onClick={() => setMode("batch")}
         >
+          <Files className="h-4 w-4" />
           Upload multiple roles
         </button>
       </div>
@@ -133,19 +144,32 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
             <label className="label" htmlFor="batchFile">
               File of description/company pairs (JSON array or CSV)
             </label>
+            <label
+              htmlFor="batchFile"
+              className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-ink-200 px-6 py-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50/30"
+            >
+              <Upload className="h-6 w-6 text-ink-400" />
+              <span className="text-sm text-ink-600">
+                {fileName ? (
+                  <span className="font-medium text-ink-900">{fileName}</span>
+                ) : (
+                  <>
+                    <span className="font-medium text-brand-600">Click to upload</span> a JSON or CSV file
+                  </>
+                )}
+              </span>
+              {fileName && (
+                <span className="badge bg-brand-50 text-brand-700">{batchCases.length} role(s) detected</span>
+              )}
+            </label>
             <input
               id="batchFile"
               ref={fileInputRef}
               type="file"
               accept=".json,.csv,text/csv,application/json"
-              className="input"
+              className="sr-only"
               onChange={onFileChange}
             />
-            {fileName && (
-              <p className="mt-2 text-sm text-slate-600">
-                {fileName}: {batchCases.length} role(s) detected
-              </p>
-            )}
           </div>
         )}
 
@@ -156,6 +180,11 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
         )}
 
         <button type="submit" className="btn-primary" disabled={submitting}>
+          {submitting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Sparkles className="h-4 w-4" />
+          )}
           {submitting ? "Starting…" : mode === "single" ? "Generate kit" : "Generate kits"}
         </button>
       </form>

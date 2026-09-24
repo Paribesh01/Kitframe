@@ -13,7 +13,7 @@ interface Props {
 }
 
 const SOURCE_STYLES: Record<ItemSource, string> = {
-  generated: "bg-slate-100 text-slate-500",
+  generated: "bg-ink-100 text-ink-500",
   edited: "bg-blue-100 text-blue-700",
   manual: "bg-purple-100 text-purple-700",
 };
@@ -30,7 +30,7 @@ function FlashcardCard({ kitId, card, source, busy, onMutate }: {
   const [back, setBack] = useState(card.back);
 
   return (
-    <li className="rounded-md border border-slate-200 p-3">
+    <li className="rounded-xl border border-ink-200 p-3">
       <div className="mb-2 flex items-center justify-between">
         <span className={`badge ${SOURCE_STYLES[source]}`}>{source}</span>
         <button
@@ -64,8 +64,8 @@ function FlashcardCard({ kitId, card, source, busy, onMutate }: {
         </div>
       ) : (
         <div>
-          <p className="text-sm font-medium text-slate-800">{card.front}</p>
-          <p className="mt-1 text-sm text-slate-500">{card.back}</p>
+          <p className="text-sm font-medium text-ink-800">{card.front}</p>
+          <p className="mt-1 text-sm text-ink-500">{card.back}</p>
           <button className="btn-secondary mt-2" onClick={() => setEditing(true)}>
             Edit
           </button>
@@ -83,7 +83,7 @@ export function FlashcardsTab({ kitId, kit, itemState, busy, onMutate }: Props) 
   return (
     <div className="card p-5">
       {kit.flashcards.length === 0 ? (
-        <p className="text-sm text-slate-400">No flashcards yet.</p>
+        <p className="text-sm text-ink-400">No flashcards yet.</p>
       ) : (
         <ul className="space-y-3">
           {kit.flashcards.map((c) => (
@@ -100,7 +100,7 @@ export function FlashcardsTab({ kitId, kit, itemState, busy, onMutate }: Props) 
       )}
 
       {open ? (
-        <div className="mt-4 space-y-2 rounded-md border border-dashed border-slate-300 p-3">
+        <div className="mt-4 space-y-2 rounded-xl border border-dashed border-ink-300 p-3">
           <input className="input" placeholder="Front" value={front} onChange={(e) => setFront(e.target.value)} />
           <textarea className="input" placeholder="Back" value={back} onChange={(e) => setBack(e.target.value)} />
           <div className="flex gap-2">

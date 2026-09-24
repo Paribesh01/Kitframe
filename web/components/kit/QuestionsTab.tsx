@@ -13,7 +13,7 @@ const CATEGORY_LABELS: Record<QuestionCategory, string> = {
 };
 
 const SOURCE_STYLES: Record<ItemSource, string> = {
-  generated: "bg-slate-100 text-slate-500",
+  generated: "bg-ink-100 text-ink-500",
   edited: "bg-blue-100 text-blue-700",
   manual: "bg-purple-100 text-purple-700",
 };
@@ -53,7 +53,7 @@ function QuestionCard({
   const [outline, setOutline] = useState(question.answer_outline);
 
   return (
-    <li className="rounded-md border border-slate-200 p-3">
+    <li className="rounded-xl border border-ink-200 p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className={`badge ${SOURCE_STYLES[source]}`}>{source}</span>
         <div className="flex gap-1">
@@ -131,9 +131,9 @@ function QuestionCard({
         </div>
       ) : (
         <div>
-          <p className="text-sm font-medium text-slate-800">{question.prompt}</p>
-          <p className="mt-1 text-sm text-slate-500">{question.answer_outline}</p>
-          <p className="mt-2 text-xs text-slate-400">Tests: {requirementText || "general fit"}</p>
+          <p className="text-sm font-medium text-ink-800">{question.prompt}</p>
+          <p className="mt-1 text-sm text-ink-500">{question.answer_outline}</p>
+          <p className="mt-2 text-xs text-ink-400">Tests: {requirementText || "general fit"}</p>
           <button className="btn-secondary mt-2" onClick={() => setEditing(true)}>
             Edit
           </button>
@@ -157,7 +157,7 @@ export function QuestionsTab({ kitId, kit, itemState, busy, onMutate, onRefreshS
         return (
           <div key={category} className="card p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-medium text-slate-900">
+              <h3 className="font-medium text-ink-900">
                 {CATEGORY_LABELS[category]} ({questions.length})
               </h3>
               <button
@@ -174,7 +174,7 @@ export function QuestionsTab({ kitId, kit, itemState, busy, onMutate, onRefreshS
             </div>
 
             {questions.length === 0 ? (
-              <p className="text-sm text-slate-400">No questions in this category yet.</p>
+              <p className="text-sm text-ink-400">No questions in this category yet.</p>
             ) : (
               <ul className="space-y-3">
                 {questions.map((q, i) => (
@@ -235,7 +235,7 @@ function AddQuestionForm({
   }
 
   return (
-    <div className="mt-3 space-y-2 rounded-md border border-dashed border-slate-300 p-3">
+    <div className="mt-3 space-y-2 rounded-xl border border-dashed border-ink-300 p-3">
       <textarea
         className="input"
         placeholder="Question prompt"

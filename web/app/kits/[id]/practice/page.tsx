@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ArrowLeft, Eye, Loader2, PartyPopper } from "lucide-react";
 import { AuthGuard } from "@/components/AuthGuard";
 import { NavBar } from "@/components/NavBar";
 import { api } from "@/lib/api";
@@ -14,7 +15,13 @@ interface NextOrder {
   uncovered: string[];
 }
 
-const CONFIDENCE_LABELS = ["Blank", "Shaky", "OK", "Good", "Nailed it"];
+const CONFIDENCE_OPTIONS = [
+  { label: "Blank", className: "border-red-200 text-red-700 hover:bg-red-50" },
+  { label: "Shaky", className: "border-orange-200 text-orange-700 hover:bg-orange-50" },
+  { label: "OK", className: "border-amber-200 text-amber-700 hover:bg-amber-50" },
+  { label: "Good", className: "border-lime-200 text-lime-700 hover:bg-lime-50" },
+  { label: "Nailed it", className: "border-emerald-200 text-emerald-700 hover:bg-emerald-50" },
+];
 
 function PracticeContent() {
   const params = useParams<{ id: string }>();
@@ -48,11 +55,16 @@ function PracticeContent() {
   }, [load]);
 
   if (loadError) return <p className="text-sm text-red-600">{loadError}</p>;
-  if (!kit || !order) return <p className="text-sm text-slate-500">Loading…</p>;
+  if (!kit || !order)
+    return (
+      <div className="flex items-center gap-2 text-sm text-ink-400">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+      </div>
+    );
 
   if (kit.flashcards.length === 0) {
     return (
-      <div className="card p-6 text-center text-sm text-slate-500">
+      <div className="card p-10 text-center text-sm text-ink-500">
         This kit has no flashcards yet. Add some from the builder first.
       </div>
     );
@@ -60,6 +72,7 @@ function PracticeContent() {
 
   const currentId = order.order[cursor];
   const card = kit.flashcards.find((c) => c.id === currentId);
+  const progressPct = Math.round((cursor / order.order.length) * 100);
 
   async function recordConfidence(confidence: number) {
     await api.post(`/api/kits/${params.id}/practice`, { cardId: currentId, confidence });
@@ -73,38 +86,55 @@ function PracticeContent() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <div className="mb-4 flex items-center justify-between text-sm text-slate-500">
-        <span>
-          Card {cursor + 1} of {order.order.length}
+      <div className="mb-2 flex items-center justify-between text-sm text-ink-500">
+        <span className="font-medium text-ink-700">
+          Card {Math.min(cursor + 1, order.order.length)} of {order.order.length}
         </span>
         <span>
           {order.covered.length} reviewed · {order.uncovered.length} not yet seen
         </span>
       </div>
+      <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
+        <div className="h-full rounded-full bg-brand-500 transition-all" style={{ width: `${progressPct}%` }} />
+      </div>
 
       {card ? (
-        <div className="card p-8 text-center">
-          <p className="mb-6 text-lg font-medium text-slate-900">{card.front}</p>
+        <div className="card p-10 text-center">
+          <p className="mb-8 text-xl font-semibold leading-snug text-ink-900">{card.front}</p>
           {revealed ? (
             <>
-              <p className="mb-6 text-sm text-slate-600">{card.back}</p>
-              <p className="mb-2 text-xs uppercase tracking-wide text-slate-400">How confident were you?</p>
-              <div className="flex justify-center gap-2">
-                {CONFIDENCE_LABELS.map((label, i) => (
-                  <button key={label} className="btn-secondary" onClick={() => recordConfidence(i + 1)}>
-                    {label}
+              <div className="mb-8 rounded-xl bg-brand-50/60 px-5 py-4 text-left text-sm leading-relaxed text-ink-700">
+                {card.back}
+              </div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400">
+                How confident were you?
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {CONFIDENCE_OPTIONS.map((opt, i) => (
+                  <button
+                    key={opt.label}
+                    className={`rounded-xl border bg-white px-3.5 py-2 text-sm font-medium transition-colors ${opt.className}`}
+                    onClick={() => recordConfidence(i + 1)}
+                  >
+                    {opt.label}
                   </button>
                 ))}
               </div>
             </>
           ) : (
-            <button className="btn-primary" onClick={() => setRevealed(true)}>
+            <button className="btn-primary mx-auto" onClick={() => setRevealed(true)}>
+              <Eye className="h-4 w-4" />
               Reveal answer
             </button>
           )}
         </div>
       ) : (
-        <div className="card p-6 text-center text-sm text-slate-500">All caught up — nice work.</div>
+        <div className="card flex flex-col items-center gap-3 p-12 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+            <PartyPopper className="h-6 w-6" />
+          </span>
+          <p className="font-medium text-ink-900">All caught up — nice work.</p>
+        </div>
       )}
     </div>
   );
@@ -116,8 +146,11 @@ export default function PracticePage() {
     <AuthGuard>
       <NavBar />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <Link href={`/kits/${params.id}`} className="mb-4 inline-block text-sm text-brand-600 hover:underline">
-          &larr; Back to kit
+        <Link
+          href={`/kits/${params.id}`}
+          className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to kit
         </Link>
         <PracticeContent />
       </main>

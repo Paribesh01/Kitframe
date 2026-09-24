@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -16,8 +17,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center text-slate-500" role="status">
-        Loading…
+      <div className="flex h-screen items-center justify-center gap-2 text-ink-400" role="status">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading…
       </div>
     );
   }

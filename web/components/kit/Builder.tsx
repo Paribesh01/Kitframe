@@ -2,6 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {
+  AlertTriangle,
+  Building2,
+  CalendarDays,
+  GraduationCap,
+  Layers,
+  ListChecks,
+  MessageSquareText,
+} from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import type { KitDetail } from "@/lib/types";
 import { BriefTab } from "./BriefTab";
@@ -12,12 +21,12 @@ import { ScheduleTab } from "./ScheduleTab";
 
 type Tab = "brief" | "requirements" | "questions" | "flashcards" | "schedule";
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "brief", label: "Company brief" },
-  { id: "requirements", label: "Role & requirements" },
-  { id: "questions", label: "Questions" },
-  { id: "flashcards", label: "Flashcards" },
-  { id: "schedule", label: "Schedule" },
+const TABS: { id: Tab; label: string; icon: typeof Building2 }[] = [
+  { id: "brief", label: "Company brief", icon: Building2 },
+  { id: "requirements", label: "Role & requirements", icon: ListChecks },
+  { id: "questions", label: "Questions", icon: MessageSquareText },
+  { id: "flashcards", label: "Flashcards", icon: Layers },
+  { id: "schedule", label: "Schedule", icon: CalendarDays },
 ];
 
 export function Builder({
@@ -61,38 +70,46 @@ export function Builder({
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">{kit.role.title || "Untitled role"}</h1>
-          <p className="text-sm text-slate-500">{kit.source.company}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-ink-900">{kit.role.title || "Untitled role"}</h1>
+          <p className="mt-0.5 text-sm text-ink-500">{kit.source.company}</p>
         </div>
         <Link href={`/kits/${kitId}/practice`} className="btn-primary">
+          <GraduationCap className="h-4 w-4" />
           Practice flashcards
         </Link>
       </div>
 
       {uncoveredMustHaves.length > 0 && (
-        <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {uncoveredMustHaves.length} must-have requirement(s) still have no question. Regenerate the
-          relevant question category to close the gap.
+        <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            {uncoveredMustHaves.length} must-have requirement(s) still have no question. Regenerate the
+            relevant question category to close the gap.
+          </span>
         </div>
       )}
 
       {banner && (
-        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
           {banner}
         </div>
       )}
 
-      <div className="mb-6 flex flex-wrap gap-2 border-b border-slate-200" role="tablist">
+      <div
+        className="mb-6 flex flex-wrap gap-1 overflow-x-auto rounded-xl bg-ink-100 p-1"
+        role="tablist"
+      >
         {TABS.map((t) => (
           <button
             key={t.id}
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium ${
-              tab === t.id ? "border-brand-600 text-brand-700" : "border-transparent text-slate-500 hover:text-slate-700"
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+              tab === t.id ? "bg-white text-ink-900 shadow-soft" : "text-ink-500 hover:text-ink-700"
             }`}
           >
+            <t.icon className="h-4 w-4" />
             {t.label}
           </button>
         ))}
