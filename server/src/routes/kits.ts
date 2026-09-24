@@ -59,6 +59,12 @@ async function runGeneration(kitId: string) {
   }
 }
 
+function readinessScoreFor(doc: InstanceType<typeof KitModel>): number | null {
+  const kit = doc.kit as Kit | null;
+  if (!kit || doc.status !== "ready") return null;
+  return computeWeakSpots(kit.role.requirements, kit.questions, kit.flashcards, doc.practice).readinessScore;
+}
+
 function summarize(doc: InstanceType<typeof KitModel>) {
   const kit = doc.kit as Kit | null;
   return {
@@ -70,6 +76,7 @@ function summarize(doc: InstanceType<typeof KitModel>) {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
     error: doc.error,
+    readinessScore: readinessScoreFor(doc),
   };
 }
 
@@ -166,6 +173,7 @@ kitsRouter.get("/:id", async (req, res) => {
     kit: doc.kit,
     itemState: doc.itemState,
     practice: doc.practice,
+    readinessScore: readinessScoreFor(doc),
     daysAvailable: doc.daysAvailable,
     companyUrl: doc.companyUrl,
     createdAt: doc.createdAt,

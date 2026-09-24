@@ -282,6 +282,21 @@ requirement showed `unreviewed` at a 30% readiness score; after rating one must-
 low and two others high, that low-confidence must-have correctly jumped to the top of
 the list — outranking two still-unreviewed nice-to-haves — and readiness rose to 57%.
 
+The readiness score isn't kept inside the report, either: `GET /api/kits` (the dashboard
+list) and `GET /api/kits/:id` both include it, computed from the same stored kit and
+practice history with no extra query, so it shows as a coloured pill on every dashboard
+card and in the builder header — a glance at the dashboard tells you which kit still
+needs work, without opening each one. Clicking the header pill jumps straight to the
+Weak Spots tab.
+
+### Printable one-pager
+
+`GET /api/kits/:id` also backs `/kits/:id/print` — a condensed, print-stylesheet-only
+view (company brief, requirements split must/nice, the day-by-day schedule as a table,
+and the full question bank grouped by category) with a "Print / Save as PDF" button.
+Deliberately excludes flashcards and full requirement metadata — the point is a
+cheat sheet you can glance at before walking in, not a reprint of the builder.
+
 ## Deployment
 
 - **Backend:** any Node host with a free tier (Render, Railway, Fly.io). Set the env

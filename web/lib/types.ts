@@ -65,6 +65,7 @@ export interface KitSummary {
   createdAt: string;
   updatedAt: string;
   error: { code: string; message: string } | null;
+  readinessScore: number | null;
 }
 
 export type WeakSpotStatus = "uncovered" | "unreviewed" | "needs-work" | "solid";
@@ -94,6 +95,7 @@ export interface KitDetail {
   kit: Kit | null;
   itemState: Record<string, ItemSource>;
   practice: { cardId: string; confidence: number; reviewedAt: string }[];
+  readinessScore: number | null;
   daysAvailable: number;
   companyUrl: string;
   createdAt: string;

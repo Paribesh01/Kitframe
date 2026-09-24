@@ -57,3 +57,14 @@ body {
 .prose-gradient-text {
   @apply bg-gradient-to-br from-ink-900 via-ink-900 to-brand-700 bg-clip-text text-transparent;
 }
+
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

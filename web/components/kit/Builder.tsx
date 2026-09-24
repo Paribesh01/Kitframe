@@ -10,6 +10,7 @@ import {
   Layers,
   ListChecks,
   MessageSquareText,
+  Printer,
   Target,
 } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
@@ -73,13 +74,36 @@ export function Builder({
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink-900">{kit.role.title || "Untitled role"}</h1>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-2xl font-bold tracking-tight text-ink-900">{kit.role.title || "Untitled role"}</h1>
+            {detail.readinessScore !== null && (
+              <button
+                type="button"
+                onClick={() => setTab("weak-spots")}
+                className={`badge transition-opacity hover:opacity-80 ${
+                  detail.readinessScore >= 75
+                    ? "bg-emerald-100 text-emerald-700"
+                    : detail.readinessScore >= 45
+                      ? "bg-amber-100 text-amber-700"
+                      : "bg-red-100 text-red-700"
+                }`}
+              >
+                {detail.readinessScore}% ready
+              </button>
+            )}
+          </div>
           <p className="mt-0.5 text-sm text-ink-500">{kit.source.company}</p>
         </div>
-        <Link href={`/kits/${kitId}/practice`} className="btn-primary">
-          <GraduationCap className="h-4 w-4" />
-          Practice flashcards
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href={`/kits/${kitId}/print`} className="btn-secondary">
+            <Printer className="h-4 w-4" />
+            Print
+          </Link>
+          <Link href={`/kits/${kitId}/practice`} className="btn-primary">
+            <GraduationCap className="h-4 w-4" />
+            Practice flashcards
+          </Link>
+        </div>
       </div>
 
       {uncoveredMustHaves.length > 0 && (

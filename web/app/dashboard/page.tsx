@@ -27,6 +27,16 @@ function StatusBadge({ status }: { status: KitSummary["status"] }) {
   );
 }
 
+function readinessClass(score: number): string {
+  if (score >= 75) return "bg-emerald-100 text-emerald-700";
+  if (score >= 45) return "bg-amber-100 text-amber-700";
+  return "bg-red-100 text-red-700";
+}
+
+function ReadinessPill({ score }: { score: number }) {
+  return <span className={`badge ${readinessClass(score)}`}>{score}% ready</span>;
+}
+
 function DashboardContent() {
   const [kits, setKits] = useState<KitSummary[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -97,7 +107,10 @@ function DashboardContent() {
                     <p className="truncate font-medium text-ink-900">{kit.role || "Untitled role"}</p>
                     <p className="truncate text-sm text-ink-500">{kit.company || "Unknown company"}</p>
                   </div>
-                  <StatusBadge status={kit.status} />
+                  <div className="flex shrink-0 items-center gap-2">
+                    {kit.readinessScore !== null && <ReadinessPill score={kit.readinessScore} />}
+                    <StatusBadge status={kit.status} />
+                  </div>
                 </Link>
               </li>
             ))}
