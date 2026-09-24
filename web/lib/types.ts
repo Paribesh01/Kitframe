@@ -67,6 +67,25 @@ export interface KitSummary {
   error: { code: string; message: string } | null;
 }
 
+export type WeakSpotStatus = "uncovered" | "unreviewed" | "needs-work" | "solid";
+
+export interface WeakSpotItem {
+  requirementId: string;
+  text: string;
+  kind: RequirementKind;
+  priority: Priority;
+  status: WeakSpotStatus;
+  questionCount: number;
+  flashcardIds: string[];
+  latestConfidence: number | null;
+  riskScore: number;
+}
+
+export interface WeakSpotsReport {
+  readinessScore: number;
+  items: WeakSpotItem[];
+}
+
 export interface KitDetail {
   id: string;
   status: "pending" | "generating" | "ready" | "failed";

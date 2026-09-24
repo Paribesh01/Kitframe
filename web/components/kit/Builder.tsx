@@ -10,6 +10,7 @@ import {
   Layers,
   ListChecks,
   MessageSquareText,
+  Target,
 } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import type { KitDetail } from "@/lib/types";
@@ -18,11 +19,13 @@ import { RequirementsTab } from "./RequirementsTab";
 import { QuestionsTab } from "./QuestionsTab";
 import { FlashcardsTab } from "./FlashcardsTab";
 import { ScheduleTab } from "./ScheduleTab";
+import { WeakSpotsTab } from "./WeakSpotsTab";
 
-type Tab = "brief" | "requirements" | "questions" | "flashcards" | "schedule";
+type Tab = "brief" | "weak-spots" | "requirements" | "questions" | "flashcards" | "schedule";
 
 const TABS: { id: Tab; label: string; icon: typeof Building2 }[] = [
   { id: "brief", label: "Company brief", icon: Building2 },
+  { id: "weak-spots", label: "Weak spots", icon: Target },
   { id: "requirements", label: "Role & requirements", icon: ListChecks },
   { id: "questions", label: "Questions", icon: MessageSquareText },
   { id: "flashcards", label: "Flashcards", icon: Layers },
@@ -118,6 +121,7 @@ export function Builder({
       {tab === "brief" && (
         <BriefTab kitId={kitId} kit={kit} busy={busy} onMutate={applyMutation} />
       )}
+      {tab === "weak-spots" && <WeakSpotsTab kitId={kitId} />}
       {tab === "requirements" && <RequirementsTab kit={kit} />}
       {tab === "questions" && (
         <QuestionsTab

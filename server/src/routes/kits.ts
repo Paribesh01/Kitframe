@@ -4,6 +4,7 @@ import { KitModel, computeDedupeKey, type ItemSource } from "../models/Kit.js";
 import { requireAuth } from "../auth/middleware.js";
 import { generateKit } from "../pipeline/orchestrator.js";
 import { validateKit, type Kit, type Question } from "../kit/schema.js";
+import { computeWeakSpots } from "../kit/weakSpots.js";
 import {
   regenerateCompanyBrief,
   regenerateQuestionCategory,
@@ -464,4 +465,15 @@ kitsRouter.get("/:id/practice/next", async (req, res) => {
     covered: [...lastConfidenceByCard.keys()],
     uncovered: kit.flashcards.filter((c) => !lastConfidenceByCard.has(c.id)).map((c) => c.id),
   });
+});
+
+// --- Weak spots report (custom feature) ---
+kitsRouter.get("/:id/weak-spots", async (req, res) => {
+  const doc = await loadOwnedKit(req, res);
+  if (!doc) return;
+  const kit = requireReadyKit(doc, res);
+  if (!kit) return;
+
+  const report = computeWeakSpots(kit.role.requirements, kit.questions, kit.flashcards, doc.practice);
+  res.json(report);
 });

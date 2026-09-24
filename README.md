@@ -261,6 +261,27 @@ partially-researched case is not a failure.
   degrading; every kit route is scoped to `req.userId`, so one user can never read or
   mutate another's kit even with a guessed id.
 
+## Creative feature: Weak Spots Report
+
+`kit/weakSpots.ts` (unit-tested in `weakSpots.test.ts`), exposed at
+`GET /api/kits/:id/weak-spots` and shown as its own tab in the builder.
+
+A generated kit tells you what's in it; it doesn't tell you what you're actually
+unprepared for. The Weak Spots Report closes that gap by combining two things the
+pipeline already computes separately — coverage (does a requirement have a question)
+and practice confidence (how you rated yourself on flashcards tied to that requirement)
+— into one ranked view and a single 0-100 readiness score, weighted so a shaky
+must-have always outranks a shaky nice-to-have.
+
+It's deliberately built as another deterministic pass, not a new LLM call: the score is
+a plain weighted formula over data that already exists (`gap = 5 − confidence`, weighted
+2× for must-haves, normalized against the worst-possible case), so it's instant, has no
+tokens-per-minute cost, and is exactly as auditable as the coverage checker it sits next
+to. Verified end-to-end against a real generated kit: before any practice every
+requirement showed `unreviewed` at a 30% readiness score; after rating one must-have
+low and two others high, that low-confidence must-have correctly jumped to the top of
+the list — outranking two still-unreviewed nice-to-haves — and readiness rose to 57%.
+
 ## Deployment
 
 - **Backend:** any Node host with a free tier (Render, Railway, Fly.io). Set the env
