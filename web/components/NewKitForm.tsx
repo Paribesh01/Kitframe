@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { FileText, Files, Loader2, Sparkles, Upload } from "lucide-react";
+import { CalendarDays, FileText, Files, Globe, Loader2, Sparkles, Upload } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
+import { useToast } from "@/lib/toast-context";
 import { parseBatchFile, type BatchCaseInput } from "@/lib/parseBatchFile";
 
 export function NewKitForm({ onCreated }: { onCreated: () => void }) {
@@ -15,6 +16,7 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -39,6 +41,7 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
         await api.post("/api/kits", { jobDescription, companyUrl, daysAvailable });
         setJobDescription("");
         setCompanyUrl("");
+        toast.success("Kit generation started");
       } else {
         if (batchCases.length === 0) {
           setError("Upload a file with at least one description/company pair first.");
@@ -49,10 +52,13 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
         setBatchCases([]);
         setFileName(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
+        toast.success(`${batchCases.length} kits started`);
       }
       onCreated();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong");
+      const message = err instanceof ApiError ? err.message : "Something went wrong";
+      setError(message);
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -95,9 +101,15 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
         {mode === "single" ? (
           <>
             <div>
-              <label className="label" htmlFor="jd">
-                Job description
-              </label>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="label mb-0" htmlFor="jd">
+                  Job description
+                </label>
+                <span className={`text-xs ${jobDescription.length > 0 && jobDescription.length < 200 ? "text-amber-600" : "text-ink-400"}`}>
+                  {jobDescription.length.toLocaleString()} characters
+                  {jobDescription.length > 0 && jobDescription.length < 200 ? " — quite short" : ""}
+                </span>
+              </div>
               <textarea
                 id="jd"
                 required
@@ -112,30 +124,36 @@ export function NewKitForm({ onCreated }: { onCreated: () => void }) {
                 <label className="label" htmlFor="companyUrl">
                   Company website
                 </label>
-                <input
-                  id="companyUrl"
-                  type="url"
-                  required
-                  className="input"
-                  value={companyUrl}
-                  onChange={(e) => setCompanyUrl(e.target.value)}
-                  placeholder="https://company.com"
-                />
+                <div className="relative">
+                  <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+                  <input
+                    id="companyUrl"
+                    type="url"
+                    required
+                    className="input pl-9"
+                    value={companyUrl}
+                    onChange={(e) => setCompanyUrl(e.target.value)}
+                    placeholder="https://company.com"
+                  />
+                </div>
               </div>
               <div>
                 <label className="label" htmlFor="days">
                   Days until interview
                 </label>
-                <input
-                  id="days"
-                  type="number"
-                  min={1}
-                  max={60}
-                  required
-                  className="input"
-                  value={daysAvailable}
-                  onChange={(e) => setDaysAvailable(Number(e.target.value))}
-                />
+                <div className="relative">
+                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+                  <input
+                    id="days"
+                    type="number"
+                    min={1}
+                    max={60}
+                    required
+                    className="input pl-9"
+                    value={daysAvailable}
+                    onChange={(e) => setDaysAvailable(Number(e.target.value))}
+                  />
+                </div>
               </div>
             </div>
           </>

@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Clock, FolderKanban, Loader2, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, FolderKanban, Gauge, Loader2, XCircle } from "lucide-react";
 import { AuthGuard } from "@/components/AuthGuard";
 import { NavBar } from "@/components/NavBar";
 import { NewKitForm } from "@/components/NewKitForm";
+import { KitCardSkeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import type { KitSummary } from "@/lib/types";
 
@@ -35,6 +36,36 @@ function readinessClass(score: number): string {
 
 function ReadinessPill({ score }: { score: number }) {
   return <span className={`badge ${readinessClass(score)}`}>{score}% ready</span>;
+}
+
+function StatTile({ label, value, icon: Icon }: { label: string; value: string | number; icon: typeof Gauge }) {
+  return (
+    <div className="card flex items-center gap-3 p-4">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="text-lg font-bold leading-none text-ink-900">{value}</p>
+        <p className="mt-1 text-xs text-ink-500">{label}</p>
+      </div>
+    </div>
+  );
+}
+
+function DashboardStats({ kits }: { kits: KitSummary[] }) {
+  const ready = kits.filter((k) => k.status === "ready");
+  const scores = ready.map((k) => k.readinessScore).filter((s): s is number => s !== null);
+  const avgReadiness = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+  const inProgress = kits.filter((k) => k.status === "pending" || k.status === "generating").length;
+
+  return (
+    <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <StatTile label="Total kits" value={kits.length} icon={FolderKanban} />
+      <StatTile label="Ready" value={ready.length} icon={CheckCircle2} />
+      <StatTile label="In progress" value={inProgress} icon={Loader2} />
+      <StatTile label="Avg. readiness" value={avgReadiness !== null ? `${avgReadiness}%` : "—"} icon={Gauge} />
+    </div>
+  );
 }
 
 function DashboardContent() {
@@ -71,6 +102,8 @@ function DashboardContent() {
           <p className="mt-1 text-sm text-ink-500">Paste a role below, or upload several at once.</p>
         </div>
 
+        {kits && kits.length > 0 && <DashboardStats kits={kits} />}
+
         <div className="mb-10">
           <NewKitForm onCreated={load} />
         </div>
@@ -78,9 +111,13 @@ function DashboardContent() {
         {loadError && <p className="text-sm text-red-600">{loadError}</p>}
 
         {kits === null && !loadError && (
-          <div className="flex items-center gap-2 text-sm text-ink-400">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading your kits…
-          </div>
+          <ul className="grid gap-3 sm:grid-cols-2" aria-label="Loading kits">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i}>
+                <KitCardSkeleton />
+              </li>
+            ))}
+          </ul>
         )}
 
         {kits && kits.length === 0 && (

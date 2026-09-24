@@ -54,6 +54,41 @@ function PracticeContent() {
     load();
   }, [load]);
 
+  const currentId = order?.order[cursor];
+  const card = kit?.flashcards.find((c) => c.id === currentId);
+
+  async function recordConfidence(confidence: number) {
+    if (!currentId || !order) return;
+    await api.post(`/api/kits/${params.id}/practice`, { cardId: currentId, confidence });
+    if (cursor + 1 < order.order.length) {
+      setCursor((c) => c + 1);
+      setRevealed(false);
+    } else {
+      await load();
+    }
+  }
+
+  // Keyboard-only practice: Space/Enter flips the card, 1-5 records
+  // confidence once it's revealed — the brief requires the app be fully
+  // keyboard-navigable, and this screen was previously mouse-only.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (!card) return;
+      if ((e.key === " " || e.key === "Enter") && !revealed) {
+        e.preventDefault();
+        setRevealed(true);
+        return;
+      }
+      if (revealed && /^[1-5]$/.test(e.key)) {
+        e.preventDefault();
+        recordConfidence(Number(e.key));
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [card, revealed, cursor]);
+
   if (loadError) return <p className="text-sm text-red-600">{loadError}</p>;
   if (!kit || !order)
     return (
@@ -70,19 +105,7 @@ function PracticeContent() {
     );
   }
 
-  const currentId = order.order[cursor];
-  const card = kit.flashcards.find((c) => c.id === currentId);
   const progressPct = Math.round((cursor / order.order.length) * 100);
-
-  async function recordConfidence(confidence: number) {
-    await api.post(`/api/kits/${params.id}/practice`, { cardId: currentId, confidence });
-    if (cursor + 1 < order!.order.length) {
-      setCursor((c) => c + 1);
-      setRevealed(false);
-    } else {
-      await load();
-    }
-  }
 
   return (
     <div className="mx-auto max-w-xl">
@@ -99,13 +122,44 @@ function PracticeContent() {
       </div>
 
       {card ? (
-        <div className="card p-10 text-center">
-          <p className="mb-8 text-xl font-semibold leading-snug text-ink-900">{card.front}</p>
-          {revealed ? (
-            <>
-              <div className="mb-8 rounded-xl bg-brand-50/60 px-5 py-4 text-left text-sm leading-relaxed text-ink-700">
-                {card.back}
+        <div>
+          <div
+            className="relative h-72 cursor-pointer"
+            style={{ perspective: "1600px" }}
+            onClick={() => !revealed && setRevealed(true)}
+            role="button"
+            tabIndex={0}
+            aria-pressed={revealed}
+            aria-label={revealed ? "Answer revealed" : "Reveal answer (Space)"}
+          >
+            <div
+              className="relative h-full w-full transition-transform duration-500 ease-out"
+              style={{
+                transformStyle: "preserve-3d",
+                transform: revealed ? "rotateY(180deg)" : "none",
+              }}
+            >
+              <div
+                className="card absolute inset-0 flex flex-col items-center justify-center gap-4 p-8 text-center"
+                style={{ backfaceVisibility: "hidden" }}
+              >
+                <p className="text-xl font-semibold leading-snug text-ink-900">{card.front}</p>
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-400">
+                  <Eye className="h-3.5 w-3.5" />
+                  Tap to reveal
+                </span>
               </div>
+              <div
+                className="card absolute inset-0 flex items-center justify-center overflow-y-auto bg-brand-50/60 p-8 text-left"
+                style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+              >
+                <p className="text-sm leading-relaxed text-ink-700">{card.back}</p>
+              </div>
+            </div>
+          </div>
+
+          {revealed && (
+            <div className="animate-fade-up mt-6 text-center">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400">
                 How confident were you?
               </p>
@@ -113,19 +167,15 @@ function PracticeContent() {
                 {CONFIDENCE_OPTIONS.map((opt, i) => (
                   <button
                     key={opt.label}
-                    className={`rounded-xl border bg-white px-3.5 py-2 text-sm font-medium transition-colors ${opt.className}`}
+                    className={`flex items-center gap-1.5 rounded-xl border bg-white px-3.5 py-2 text-sm font-medium transition-colors ${opt.className}`}
                     onClick={() => recordConfidence(i + 1)}
                   >
+                    <span className="text-xs opacity-60">{i + 1}</span>
                     {opt.label}
                   </button>
                 ))}
               </div>
-            </>
-          ) : (
-            <button className="btn-primary mx-auto" onClick={() => setRevealed(true)}>
-              <Eye className="h-4 w-4" />
-              Reveal answer
-            </button>
+            </div>
           )}
         </div>
       ) : (

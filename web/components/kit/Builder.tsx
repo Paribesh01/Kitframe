@@ -14,6 +14,7 @@ import {
   Target,
 } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
+import { useToast } from "@/lib/toast-context";
 import type { KitDetail } from "@/lib/types";
 import { BriefTab } from "./BriefTab";
 import { RequirementsTab } from "./RequirementsTab";
@@ -46,20 +47,24 @@ export function Builder({
   const [tab, setTab] = useState<Tab>("brief");
   const [banner, setBanner] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   const kit = detail.kit!;
   const uncoveredMustHaves = kit.coverage.uncovered_requirement_ids.filter(
     (id) => kit.role.requirements.find((r) => r.id === id)?.priority === "must",
   );
 
-  async function applyMutation<T extends { kit: unknown }>(fn: () => Promise<T>) {
+  async function applyMutation<T extends { kit: unknown }>(fn: () => Promise<T>, successMessage = "Saved") {
     setBusy(true);
     setBanner(null);
     try {
       const res = await fn();
       setDetail((prev) => ({ ...prev, kit: res.kit as KitDetail["kit"] }));
+      toast.success(successMessage);
     } catch (err) {
-      setBanner(err instanceof ApiError ? err.message : "Something went wrong");
+      const message = err instanceof ApiError ? err.message : "Something went wrong";
+      setBanner(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
