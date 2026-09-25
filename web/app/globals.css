@@ -14,48 +14,56 @@ body {
   @apply bg-brand-200 text-brand-900;
 }
 
-.btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98];
-}
+/* Declared inside @layer components so Tailwind places these rules before
+   the utilities layer in the compiled stylesheet — otherwise a utility
+   override on an element (e.g. `className="input pl-9"`) loses the cascade
+   to these component classes instead of winning, since plain CSS written
+   after `@tailwind utilities` in this file would otherwise come later in
+   the output regardless of class order in the JSX. */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98];
+  }
 
-.btn-primary {
-  @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 hover:shadow-lift;
-}
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 hover:shadow-lift;
+  }
 
-.btn-secondary {
-  @apply btn bg-white text-ink-700 border border-ink-200 shadow-soft hover:border-brand-300 hover:text-brand-700 hover:bg-brand-50/50;
-}
+  .btn-secondary {
+    @apply btn bg-white text-ink-700 border border-ink-200 shadow-soft hover:border-brand-300 hover:text-brand-700 hover:bg-brand-50/50;
+  }
 
-.btn-ghost {
-  @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-900;
-}
+  .btn-ghost {
+    @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+  }
 
-.btn-danger {
-  @apply btn bg-white text-red-600 border border-red-200 hover:bg-red-50 hover:border-red-300;
-}
+  .btn-danger {
+    @apply btn bg-white text-red-600 border border-red-200 hover:bg-red-50 hover:border-red-300;
+  }
 
-.card {
-  @apply rounded-2xl border border-ink-100 bg-white shadow-card;
-}
+  .card {
+    @apply rounded-2xl border border-ink-100 bg-white shadow-card;
+  }
 
-.input {
-  @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:border-brand-400;
-}
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:border-brand-400;
+  }
 
-.label {
-  @apply block text-sm font-medium text-ink-700 mb-1.5;
-}
+  .label {
+    @apply block text-sm font-medium text-ink-700 mb-1.5;
+  }
 
-.badge {
-  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
-}
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
 
-.section-eyebrow {
-  @apply inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 ring-1 ring-inset ring-brand-200;
-}
+  .section-eyebrow {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 ring-1 ring-inset ring-brand-200;
+  }
 
-.prose-gradient-text {
-  @apply bg-gradient-to-br from-ink-900 via-ink-900 to-brand-700 bg-clip-text text-transparent;
+  .prose-gradient-text {
+    @apply bg-gradient-to-br from-ink-900 via-ink-900 to-brand-700 bg-clip-text text-transparent;
+  }
 }
 
 @media print {
